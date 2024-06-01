@@ -31,7 +31,7 @@
     
     // Add mod menu buttons
     UIButton *button1 = [UIButton buttonWithType:UIButtonTypeSystem];
-    [button1 setTitle:@"Option 1" forState:UIControlStateNormal];
+    [button1 setTitle:@"Speed" forState:UIControlStateNormal];
     button1.frame = CGRectMake(20, 20, menuWidth - 40, 40); // Adjust button width
     [button1 addTarget:self action:@selector(option1ButtonTapped) forControlEvents:UIControlEventTouchUpInside];
     [self.modMenuView addSubview:button1];
