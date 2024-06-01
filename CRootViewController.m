@@ -1,58 +1,46 @@
 #import "CRootViewController.h"
 
 @interface CRootViewController ()
-@property (nonatomic, strong) NSMutableArray * objects;
+@property (nonatomic, strong) NSMutableArray *objects;
+@property (nonatomic, strong) UIView *modMenuView;
 @end
 
 @implementation CRootViewController
 
-- (void)loadView {
-	[super loadView];
-
-	_objects = [NSMutableArray array];
-
-	self.title = @"Root View Controller";
-	self.navigationItem.leftBarButtonItem = self.editButtonItem;
-	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addButtonTapped:)];
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    // Set up mod menu button
+    UIBarButtonItem *modMenuButton = [[UIBarButtonItem alloc] initWithTitle:@" Trappps Mod Menu" style:UIBarButtonItemStylePlain target:self action:@selector(toggleModMenu)];
+    self.navigationItem.rightBarButtonItem = modMenuButton;
+    
+    // Set up mod menu view
+    CGFloat menuWidth = 200; // Adjust the width of the mod menu as needed
+    CGFloat menuHeight = 150; // Adjust the height of the mod menu as needed
+    self.modMenuView = [[UIView alloc] initWithFrame:CGRectMake((self.view.frame.size.width - menuWidth) / 2, (self.view.frame.size.height - menuHeight) / 2, menuWidth, menuHeight)];
+    self.modMenuView.backgroundColor = [UIColor whiteColor]; // Adjust the background color as needed
+    self.modMenuView.layer.cornerRadius = 10; // Adjust the corner radius as needed
+    self.modMenuView.hidden = YES; // Hide the mod menu initially
+    [self.view addSubview:self.modMenuView];
+    
+    // Add mod menu buttons
+    UIButton *button1 = [UIButton buttonWithType:UIButtonTypeSystem];
+    [button1 setTitle:@"Speed" forState:UIControlStateNormal];
+    button1.frame = CGRectMake(20, 20, 160, 40); // Adjust button position and size as needed
+    [button1 addTarget:self action:@selector(option1ButtonTapped) forControlEvents:UIControlEventTouchUpInside];
+    [self.modMenuView addSubview:button1];
+    
+    // Add more buttons as needed...
 }
 
-- (void)addButtonTapped:(id)sender {
-	[_objects insertObject:[NSDate date] atIndex:0];
-	[self.tableView insertRowsAtIndexPaths:@[ [NSIndexPath indexPathForRow:0 inSection:0] ] withRowAnimation:UITableViewRowAnimationAutomatic];
+- (void)toggleModMenu {
+    self.modMenuView.hidden = !self.modMenuView.hidden; // Toggle the visibility of the mod menu
 }
 
-#pragma mark - Table View Data Source
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-	return 1;
+- (void)option1ButtonTapped {
+    // Handle option 1 button tap
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-	return _objects.count;
-}
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-	static NSString *CellIdentifier = @"Cell";
-	UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-
-	if (!cell) {
-		cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
-	}
-
-	NSDate *date = _objects[indexPath.row];
-	cell.textLabel.text = date.description;
-	return cell;
-}
-
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-	[_objects removeObjectAtIndex:indexPath.row];
-	[tableView deleteRowsAtIndexPaths:@[ indexPath ] withRowAnimation:UITableViewRowAnimationAutomatic];
-}
-
-#pragma mark - Table View Delegate
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-	[tableView deselectRowAtIndexPath:indexPath animated:YES];
-}
+// Implement methods for other mod menu buttons as needed
 
 @end
