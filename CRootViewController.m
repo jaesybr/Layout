@@ -11,30 +11,35 @@
     [super viewDidLoad];
     
     // Set up mod menu button
-    UIBarButtonItem *modMenuButton = [[UIBarButtonItem alloc] initWithTitle:@" Trappps Mod Menu" style:UIBarButtonItemStylePlain target:self action:@selector(toggleModMenu)];
+    UIBarButtonItem *modMenuButton = [[UIBarButtonItem alloc] initWithTitle:@"Mod Menu" style:UIBarButtonItemStylePlain target:self action:@selector(toggleModMenu)];
     self.navigationItem.rightBarButtonItem = modMenuButton;
     
+    // Calculate mod menu size and position based on screen size
+    CGFloat screenWidth = CGRectGetWidth([UIScreen mainScreen].bounds);
+    CGFloat screenHeight = CGRectGetHeight([UIScreen mainScreen].bounds);
+    CGFloat menuWidth = screenWidth * 0.8; // 80% of screen width
+    CGFloat menuHeight = screenHeight * 0.6; // 60% of screen height
+    CGFloat menuX = (screenWidth - menuWidth) / 2; // Center horizontally
+    CGFloat menuY = (screenHeight - menuHeight) / 2; // Center vertically
+    
     // Set up mod menu view
-    CGFloat menuWidth = 200; // Adjust the width of the mod menu as needed
-    CGFloat menuHeight = 150; // Adjust the height of the mod menu as needed
-    self.modMenuView = [[UIView alloc] initWithFrame:CGRectMake((self.view.frame.size.width - menuWidth) / 2, (self.view.frame.size.height - menuHeight) / 2, menuWidth, menuHeight)];
-    self.modMenuView.backgroundColor = [UIColor whiteColor]; // Adjust the background color as needed
-    self.modMenuView.layer.cornerRadius = 10; // Adjust the corner radius as needed
-    self.modMenuView.hidden = YES; // Hide the mod menu initially
+    self.modMenuView = [[UIView alloc] initWithFrame:CGRectMake(menuX, menuY, menuWidth, menuHeight)];
+    self.modMenuView.backgroundColor = [UIColor whiteColor];
+    self.modMenuView.layer.cornerRadius = 10;
+    self.modMenuView.hidden = YES;
     [self.view addSubview:self.modMenuView];
     
     // Add mod menu buttons
     UIButton *button1 = [UIButton buttonWithType:UIButtonTypeSystem];
-    [button1 setTitle:@"Speed" forState:UIControlStateNormal];
-    button1.frame = CGRectMake(20, 20, 160, 40); // Adjust button position and size as needed
+    [button1 setTitle:@"Option 1" forState:UIControlStateNormal];
+    button1.frame = CGRectMake(20, 20, menuWidth - 40, 40); // Adjust button width
     [button1 addTarget:self action:@selector(option1ButtonTapped) forControlEvents:UIControlEventTouchUpInside];
     [self.modMenuView addSubview:button1];
-    
     // Add more buttons as needed...
 }
 
 - (void)toggleModMenu {
-    self.modMenuView.hidden = !self.modMenuView.hidden; // Toggle the visibility of the mod menu
+    self.modMenuView.hidden = !self.modMenuView.hidden;
 }
 
 - (void)option1ButtonTapped {
