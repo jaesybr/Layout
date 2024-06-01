@@ -1,8 +1,58 @@
 #import "CRootViewController.h"
+#import <UIKit/UIKit.h>
 
-@interface CRootViewController ()
-@property (nonatomic, strong) NSMutableArray *objects;
-@property (nonatomic, strong) UIView *modMenuView;
+@interface LoginViewController : UIViewController
+
+@end
+
+@implementation LoginViewController {
+    UITextField *_emailTextField;
+    UITextField *_passwordTextField;
+    UIButton *_loginButton;
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    self.title = @"Login";
+    self.view.backgroundColor = [UIColor whiteColor];
+    
+    _emailTextField = [[UITextField alloc] initWithFrame:CGRectMake(50, 150, 300, 40)];
+    _emailTextField.placeholder = @"Email";
+    _emailTextField.borderStyle = UITextBorderStyleRoundedRect;
+    [self.view addSubview:_emailTextField];
+    
+    _passwordTextField = [[UITextField alloc] initWithFrame:CGRectMake(50, 200, 300, 40)];
+    _passwordTextField.placeholder = @"Password";
+    _passwordTextField.secureTextEntry = YES;
+    _passwordTextField.borderStyle = UITextBorderStyleRoundedRect;
+    [self.view addSubview:_passwordTextField];
+    
+    _loginButton = [UIButton buttonWithType:UIButtonTypeSystem];
+    _loginButton.frame = CGRectMake(50, 250, 300, 40);
+    [_loginButton setTitle:@"Login" forState:UIControlStateNormal];
+    [_loginButton addTarget:self action:@selector(loginButtonTapped) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:_loginButton];
+}
+
+- (void)loginButtonTapped {
+    NSString *email = _emailTextField.text;
+    NSString *password = _passwordTextField.text;
+    
+    if (email.length > 0 && password.length > 0) {
+        // Authentication successful
+        // Navigate to the home screen (assuming HomeViewController exists)
+        HomeViewController *homeVC = [[HomeViewController alloc] init];
+        UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:homeVC];
+        [self presentViewController:navController animated:YES completion:nil];
+    } else {
+        // Authentication failed: Show an alert or handle the error
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Error" message:@"Invalid email or password" preferredStyle:UIAlertControllerStyleAlert];
+        [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
+        [self presentViewController:alertController animated:YES completion:nil];
+    }
+}
+
 @end
 
 @implementation CRootViewController
@@ -10,42 +60,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    // Set up mod menu button
-    UIBarButtonItem *modMenuButton = [[UIBarButtonItem alloc] initWithTitle:@"Mod Menu" style:UIBarButtonItemStylePlain target:self action:@selector(toggleModMenu)];
-    self.navigationItem.rightBarButtonItem = modMenuButton;
-    
-    // Calculate mod menu size and position based on screen size
-    CGFloat screenWidth = CGRectGetWidth([UIScreen mainScreen].bounds);
-    CGFloat screenHeight = CGRectGetHeight([UIScreen mainScreen].bounds);
-    CGFloat menuWidth = screenWidth * 0.8; // 80% of screen width
-    CGFloat menuHeight = screenHeight * 0.6; // 60% of screen height
-    CGFloat menuX = (screenWidth - menuWidth) / 2; // Center horizontally
-    CGFloat menuY = (screenHeight - menuHeight) / 2; // Center vertically
-    
-    // Set up mod menu view
-    self.modMenuView = [[UIView alloc] initWithFrame:CGRectMake(menuX, menuY, menuWidth, menuHeight)];
-    self.modMenuView.backgroundColor = [UIColor whiteColor];
-    self.modMenuView.layer.cornerRadius = 10;
-    self.modMenuView.hidden = YES;
-    [self.view addSubview:self.modMenuView];
-    
-    // Add mod menu buttons
-    UIButton *button1 = [UIButton buttonWithType:UIButtonTypeSystem];
-    [button1 setTitle:@"Speed" forState:UIControlStateNormal];
-    button1.frame = CGRectMake(20, 20, menuWidth - 40, 40); // Adjust button width
-    [button1 addTarget:self action:@selector(option1ButtonTapped) forControlEvents:UIControlEventTouchUpInside];
-    [self.modMenuView addSubview:button1];
-    // Add more buttons as needed...
+    // Present the login view controller when the root view controller loads
+    LoginViewController *loginVC = [[LoginViewController alloc] init];
+    [self presentViewController:loginVC animated:YES completion:nil];
 }
-
-- (void)toggleModMenu {
-    self.modMenuView.hidden = !self.modMenuView.hidden;
-}
-
-- (void)option1ButtonTapped {
-    // Handle option 1 button tap
-}
-
-// Implement methods for other mod menu buttons as needed
 
 @end
