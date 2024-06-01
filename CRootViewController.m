@@ -1,75 +1,50 @@
-// Tweak.xm
+#import "CRootViewController.h"
 
-#import <UIKit/UIKit.h>
-
-@interface User : NSObject
-
-@property (nonatomic, strong) NSString *username;
-@property (nonatomic, strong) NSString *password;
-
+@interface AuthenticationViewController ()
+@property (nonatomic, strong) UIImageView *logoImageView;
+@property (nonatomic, strong) UITextField *usernameField;
+@property (nonatomic, strong) UITextField *passwordField;
+@property (nonatomic, strong) UIButton *loginButton;
 @end
 
-@implementation User
-
-@end
-
-%hook LoginViewController
+@implementation AuthenticationViewController
 
 - (void)viewDidLoad {
-    %orig;
-    [self setupLoginUI];
-}
-
-- (void)setupLoginUI {
-    UITextField *usernameField = [[UITextField alloc] initWithFrame:CGRectMake(20, 100, 200, 40)];
-    usernameField.placeholder = @"Username";
-    [self.view addSubview:usernameField];
+    [super viewDidLoad];
+    self.view.backgroundColor = [UIColor whiteColor];
     
-    UITextField *passwordField = [[UITextField alloc] initWithFrame:CGRectMake(20, 160, 200, 40)];
-    passwordField.placeholder = @"Password";
-    passwordField.secureTextEntry = YES;
-    [self.view addSubview:passwordField];
+    // CashApp logo
+    self.logoImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"cashapp_logo"]];
+    self.logoImageView.contentMode = UIViewContentModeScaleAspectFit;
+    self.logoImageView.frame = CGRectMake(50, 100, 200, 100);
+    [self.view addSubview:self.logoImageView];
     
-    UIButton *loginButton = [UIButton buttonWithType:UIButtonTypeSystem];
-    loginButton.frame = CGRectMake(20, 220, 200, 40);
-    [loginButton setTitle:@"Login" forState:UIControlStateNormal];
-    [loginButton addTarget:self action:@selector(loginButtonTapped) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:loginButton];
-}
-
-- (void)loginButtonTapped {
-    NSString *username = [self getUsername];
-    NSString *password = [self getPassword];
-    User *user = [[User alloc] init];
-    user.username = username;
-    user.password = password;
+    // Username field
+    self.usernameField = [[UITextField alloc] initWithFrame:CGRectMake(50, 250, 300, 40)];
+    self.usernameField.placeholder = @"Username";
+    self.usernameField.borderStyle = UITextBorderStyleRoundedRect;
+    [self.view addSubview:self.usernameField];
     
-    if ([self validateUser:user]) {
-        %orig;
-    } else {
-        [self showErrorAlert];
-    }
+    // Password field
+    self.passwordField = [[UITextField alloc] initWithFrame:CGRectMake(50, 310, 300, 40)];
+    self.passwordField.placeholder = @"Password";
+    self.passwordField.secureTextEntry = YES;
+    self.passwordField.borderStyle = UITextBorderStyleRoundedRect;
+    [self.view addSubview:self.passwordField];
+    
+    // Login button
+    self.loginButton = [UIButton buttonWithType:UIButtonTypeSystem];
+    self.loginButton.frame = CGRectMake(50, 370, 300, 40);
+    [self.loginButton setTitle:@"Login" forState:UIControlStateNormal];
+    [self.loginButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    self.loginButton.backgroundColor = [UIColor colorWithRed:0.20 green:0.60 blue:0.86 alpha:1.0]; // CashApp blue
+    self.loginButton.layer.cornerRadius = 10.0;
+    [self.loginButton addTarget:self action:@selector(loginButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:self.loginButton];
 }
 
-- (NSString *)getUsername {
-    // Implement logic to get username from text field or elsewhere
-    return @"username";
+- (void)loginButtonTapped:(id)sender {
+    // Handle login logic here
 }
 
-- (NSString *)getPassword {
-    // Implement logic to get password from text field or elsewhere
-    return @"password";
-}
-
-- (BOOL)validateUser:(User *)user {
-    // Implement logic to validate user credentials
-    return ([user.username isEqualToString:@"valid_username"] && [user.password isEqualToString:@"valid_password"]);
-}
-
-- (void)showErrorAlert {
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Error" message:@"Invalid username or password" preferredStyle:UIAlertControllerStyleAlert];
-    [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
-    [self presentViewController:alertController animated:YES completion:nil];
-}
-
-%end
+@end
