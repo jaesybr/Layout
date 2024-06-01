@@ -1,68 +1,75 @@
-#import "CRootViewController.h"
+// Tweak.xm
+
 #import <UIKit/UIKit.h>
 
-@interface LoginViewController : UIViewController
+@interface User : NSObject
+
+@property (nonatomic, strong) NSString *username;
+@property (nonatomic, strong) NSString *password;
 
 @end
 
-@implementation LoginViewController {
-    UITextField *_emailTextField;
-    UITextField *_passwordTextField;
-    UIButton *_loginButton;
-}
+@implementation User
+
+@end
+
+%hook LoginViewController
 
 - (void)viewDidLoad {
-    [super viewDidLoad];
+    %orig;
+    [self setupLoginUI];
+}
+
+- (void)setupLoginUI {
+    UITextField *usernameField = [[UITextField alloc] initWithFrame:CGRectMake(20, 100, 200, 40)];
+    usernameField.placeholder = @"Username";
+    [self.view addSubview:usernameField];
     
-    self.title = @"Login";
-    self.view.backgroundColor = [UIColor whiteColor];
+    UITextField *passwordField = [[UITextField alloc] initWithFrame:CGRectMake(20, 160, 200, 40)];
+    passwordField.placeholder = @"Password";
+    passwordField.secureTextEntry = YES;
+    [self.view addSubview:passwordField];
     
-    _emailTextField = [[UITextField alloc] initWithFrame:CGRectMake(50, 150, 300, 40)];
-    _emailTextField.placeholder = @"Email";
-    _emailTextField.borderStyle = UITextBorderStyleRoundedRect;
-    [self.view addSubview:_emailTextField];
-    
-    _passwordTextField = [[UITextField alloc] initWithFrame:CGRectMake(50, 200, 300, 40)];
-    _passwordTextField.placeholder = @"Password";
-    _passwordTextField.secureTextEntry = YES;
-    _passwordTextField.borderStyle = UITextBorderStyleRoundedRect;
-    [self.view addSubview:_passwordTextField];
-    
-    _loginButton = [UIButton buttonWithType:UIButtonTypeSystem];
-    _loginButton.frame = CGRectMake(50, 250, 300, 40);
-    [_loginButton setTitle:@"Login" forState:UIControlStateNormal];
-    [_loginButton addTarget:self action:@selector(loginButtonTapped) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:_loginButton];
+    UIButton *loginButton = [UIButton buttonWithType:UIButtonTypeSystem];
+    loginButton.frame = CGRectMake(20, 220, 200, 40);
+    [loginButton setTitle:@"Login" forState:UIControlStateNormal];
+    [loginButton addTarget:self action:@selector(loginButtonTapped) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:loginButton];
 }
 
 - (void)loginButtonTapped {
-    NSString *email = _emailTextField.text;
-    NSString *password = _passwordTextField.text;
+    NSString *username = [self getUsername];
+    NSString *password = [self getPassword];
+    User *user = [[User alloc] init];
+    user.username = username;
+    user.password = password;
     
-    if (email.length > 0 && password.length > 0) {
-        // Authentication successful
-        // Navigate to the home screen (assuming HomeViewController exists)
-        HomeViewController *homeVC = [[HomeViewController alloc] init];
-        UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:homeVC];
-        [self presentViewController:navController animated:YES completion:nil];
+    if ([self validateUser:user]) {
+        %orig;
     } else {
-        // Authentication failed: Show an alert or handle the error
-        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Error" message:@"Invalid email or password" preferredStyle:UIAlertControllerStyleAlert];
-        [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
-        [self presentViewController:alertController animated:YES completion:nil];
+        [self showErrorAlert];
     }
 }
 
-@end
-
-@implementation CRootViewController
-
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    
-    // Present the login view controller when the root view controller loads
-    LoginViewController *loginVC = [[LoginViewController alloc] init];
-    [self presentViewController:loginVC animated:YES completion:nil];
+- (NSString *)getUsername {
+    // Implement logic to get username from text field or elsewhere
+    return @"username";
 }
 
-@end
+- (NSString *)getPassword {
+    // Implement logic to get password from text field or elsewhere
+    return @"password";
+}
+
+- (BOOL)validateUser:(User *)user {
+    // Implement logic to validate user credentials
+    return ([user.username isEqualToString:@"valid_username"] && [user.password isEqualToString:@"valid_password"]);
+}
+
+- (void)showErrorAlert {
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Error" message:@"Invalid username or password" preferredStyle:UIAlertControllerStyleAlert];
+    [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
+    [self presentViewController:alertController animated:YES completion:nil];
+}
+
+%end
